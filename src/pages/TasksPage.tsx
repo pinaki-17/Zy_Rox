@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { TaskCard } from "@/components/specific/task-card"; // Make sure TaskCard is adapted
-import { Music, BedDouble, Zap, PlusCircle, GlassWater, StretchHorizontal, Brain } from "lucide-react";
+import { Music, BedDouble, Zap, PlusCircle, GlassWater, StretchHorizontal, Brain, Trash2, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface Task {
   _id: string;
@@ -21,33 +24,26 @@ const initialWellnessTasks = [
   { id: "mindful", title: "Practice Mindful Breathing", icon: <Brain className="w-6 h-6"/>, completed: false }
 ];
 
+const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5001"; // Get base URL
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const { toast } = useToast();
 
   const fetchTasks = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get<Task[]>("/api/tasks");
-      // If backend tasks are different from initialWellnessTasks, merge or prioritize backend
-      // For now, let's assume backend stores these wellness tasks if they are dynamic
-      // If backend is empty, we can populate with initialWellnessTasks or create them
-      if (response.data.length > 0) {
-        setTasks(response.data);
-      } else {
-        // If no tasks from backend, use predefined ones (or add them to backend)
-        // This part needs refinement based on how tasks are managed
-        const clientSideTasks = initialWellnessTasks.map(t => ({...t, _id: t.id}));
-        setTasks(clientSideTasks);
-      }
+      const response = await axios.get<Task[]>(`${apiUrl}/api/tasks`);
+      setTasks(response.data);
     } catch (error) {
       console.error("Error fetching tasks:", error);
       toast({ title: "Error", description: "Could not fetch tasks.", variant: "destructive" });
-      // Fallback to client-side tasks on error
-      const clientSideTasks = initialWellnessTasks.map(t => ({...t, _id: t.id}));
-      setTasks(clientSideTasks);
+      // Fallback or clear tasks on error? Decide based on desired UX
+      // setTasks([]);
     } finally {
       setIsLoading(false);
     }
@@ -55,42 +51,87 @@ export default function TasksPage() {
 
   useEffect(() => {
     fetchTasks();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleAddTask = async (title: string) => { // Example: if "Add New Task" button was functional
+  const handleOpenModal = (task: Task | null = null) => {
+    setEditingTask(task);
+    setNewTaskTitle(task ? task.title : "");
+    setIsModalOpen(true);
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setNewTaskTitle("");
+    setEditingTask(null);
+  }
+
+  const handleSaveTask = async () => {
+    if (!newTaskTitle.trim()) {
+        toast({ title: "Validation Error", description: "Task title cannot be empty.", variant: "destructive"});
+        return;
+    }
     setIsLoading(true);
     try {
-      const response = await axios.post<Task>("/api/tasks", { title });
-      setTasks([...tasks, response.data]);
-      toast({ title: "Success", description: "Task added."});
+        if (editingTask) {
+            // Update existing task
+            const response = await axios.put<Task>(`${apiUrl}/api/tasks/${editingTask._id}`, { title: newTaskTitle, completed: editingTask.completed });
+            setTasks(tasks.map(t => t._id === editingTask._id ? response.data : t));
+            toast({ title: "Success", description: "Task updated." });
+        } else {
+            // Create new task
+            const response = await axios.post<Task>(`${apiUrl}/api/tasks`, { title: newTaskTitle });
+            setTasks([...tasks, response.data]);
+            toast({ title: "Success", description: "Task added."});
+        }
+        handleCloseModal();
     } catch (error) {
-      toast({ title: "Error", description: "Could not add task.", variant: "destructive" });
+        toast({ title: "Error", description: `Could not ${editingTask ? 'update' : 'add'} task.`, variant: "destructive" });
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    if (!window.confirm("Are you sure you want to delete this task?")) return;
+    setIsLoading(true);
+    try {
+      await axios.delete(`${apiUrl}/api/tasks/${taskId}`);
+      setTasks(tasks.filter(task => task._id !== taskId));
+      toast({ title: "Success", description: "Task deleted." });
+    } catch (error) {
+      toast({ title: "Error", description: "Could not delete task.", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
   };
 
+
   const handleToggleTask = async (taskId: string, currentCompletedStatus: boolean) => {
-    // Find the task to get its current title if needed for update
     const taskToUpdate = tasks.find(t => t._id === taskId);
     if (!taskToUpdate) return;
 
+    // Optimistic update
+    setTasks(tasks.map(task => task._id === taskId ? { ...task, completed: !currentCompletedStatus } : task));
+
     try {
-      const response = await axios.put<Task>(`/api/tasks/${taskId}`, { 
+      await axios.put<Task>(`${apiUrl}/api/tasks/${taskId}`, {
         completed: !currentCompletedStatus,
         title: taskToUpdate.title // Send title if backend expects it for update
       });
-      setTasks(tasks.map(task => task._id === taskId ? response.data : task));
-      toast({ title: "Task Updated", description: `Task marked as ${response.data.completed ? 'complete' : 'incomplete'}.`});
+      // No need to update state again if optimistic update worked, but fetch can ensure consistency
+      // fetchTasks(); // Optional: refetch to confirm
+      toast({ title: "Task Updated", description: `Task marked as ${!currentCompletedStatus ? 'complete' : 'incomplete'}.`});
     } catch (error) {
-      toast({ title: "Error", description: "Could not update task status.", variant: "destructive" });
+      toast({ title: "Error", description: "Could not update task status. Reverting.", variant: "destructive" });
+      // Revert optimistic update
+      setTasks(tasks.map(task => task._id === taskId ? { ...task, completed: currentCompletedStatus } : task));
     }
   };
-  
-  // Map initial tasks to include icon components for rendering
-  // This mapping happens client-side as icons are React components
+
+  // Map tasks to include icons for rendering (client-side mapping)
   const displayTasks = tasks.map(task => {
-    const initialTask = initialWellnessTasks.find(it => it.id === task._id || it.title === task.title);
+    const initialTask = initialWellnessTasks.find(it => it.title.toLowerCase() === task.title.toLowerCase());
     return {
       ...task,
       icon: initialTask ? initialTask.icon : <Zap className="w-6 h-6" /> // Default icon
@@ -107,26 +148,70 @@ export default function TasksPage() {
             Complete these tasks to improve your well-being.
           </p>
         </div>
-        {/* Add New Task Button - functionality to be implemented if custom tasks are allowed */}
-        <Button className="mt-4 sm:mt-0 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => alert("Add New Task functionality to be implemented")}>
+        <Button className="mt-4 sm:mt-0 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => handleOpenModal()}>
           <PlusCircle className="mr-2 h-5 w-5" /> Add New Task
         </Button>
       </header>
-      
-      {isLoading && <p>Loading tasks...</p>}
+
+      {isLoading && tasks.length === 0 && <p>Loading tasks...</p>}
+      {!isLoading && tasks.length === 0 && <p>No tasks found. Add one!</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {displayTasks.map((task) => (
-          <TaskCard 
-            key={task._id} 
-            id={task._id} 
-            title={task.title} 
-            icon={task.icon}
-            initialCompleted={task.completed}
-            onToggleComplete={handleToggleTask}
-          />
+          <div key={task._id} className="relative group">
+             <TaskCard
+                id={task._id}
+                title={task.title}
+                icon={task.icon}
+                initialCompleted={task.completed}
+                onToggleComplete={handleToggleTask}
+             />
+             {/* Edit and Delete buttons */}
+             <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleOpenModal(task)} disabled={isLoading}>
+                    <Edit className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDeleteTask(task._id)} disabled={isLoading}>
+                    <Trash2 className="h-4 w-4" />
+                </Button>
+             </div>
+          </div>
         ))}
       </div>
+
+      {/* Add/Edit Task Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editingTask ? "Edit Task" : "Add New Task"}</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="task-title" className="text-right">
+                Title
+              </Label>
+              <Input
+                id="task-title"
+                value={newTaskTitle}
+                onChange={(e) => setNewTaskTitle(e.target.value)}
+                className="col-span-3"
+                placeholder="Enter task title"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline" onClick={handleCloseModal}>
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="button" onClick={handleSaveTask} disabled={isLoading}>
+              {isLoading ? 'Saving...' : 'Save Task'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }

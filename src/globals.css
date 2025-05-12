@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: var(--font-geist-sans, Arial, Helvetica, sans-serif); /* Added fallback fonts */
+  font-family: Arial, Helvetica, sans-serif; /* Use standard system fonts */
 }
 
 @layer base {
@@ -101,28 +101,26 @@ body {
   }
 }
 
-/* Floating label styles - revised to avoid @apply with peer utilities */
+/* Floating label styles - simplified */
 .floating-label-container {
   position: relative;
+  margin-bottom: 1.5rem; /* Equivalent to mb-6 */
 }
 
 .floating-label-input {
-  /* Base styles for the input, 'peer' class is applied directly in JSX */
-  /* Tailwind classes for h-10, w-full, rounded-md, border, border-input, bg-transparent, px-3, py-2, text-sm, shadow-sm */
-  /* These are better applied directly on the component using Tailwind, but can be base styled here */
+  /* Base styles for the input */
   height: 2.5rem; /* h-10 */
   width: 100%;
   border-radius: 0.375rem; /* rounded-md */
   border-width: 1px;
   border-color: hsl(var(--input));
-  background-color: hsl(var(--background));
+  background-color: hsl(var(--background)); /* Use background, not transparent for label bg */
   padding-left: 0.75rem; /* px-3 */
   padding-right: 0.75rem; /* px-3 */
-  padding-top: 0.5rem; /* py-2 */
-  padding-bottom: 0.5rem; /* py-2 */
+  padding-top: 0.625rem; /* Adjusted padding-top for label space */
+  padding-bottom: 0.375rem;
   font-size: 0.875rem; /* text-sm */
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
-  /* ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 */
 }
 
 .floating-label-input:focus-visible {
@@ -140,39 +138,29 @@ body {
 }
 
 .floating-label-label {
-  /* Base styles for the label. Peer-specific styles are better applied in the component JSX. */
   position: absolute;
-  left: 0.75rem; /* Equivalent to left-3 */
-  /* top: 0.5rem; */ /* Initial top position, will be adjusted by peer states */
+  left: 0.75rem; /* left-3 */
+  top: 0.5rem; /* Base position */
   color: hsl(var(--muted-foreground));
   font-size: 0.875rem; /* text-sm */
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 200ms;
-  pointer-events: none; /* So clicks go through to the input */
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none; /* Allow clicks to pass through */
+  background-color: hsl(var(--background)); /* Match input background */
+  padding: 0 0.25rem; /* Small horizontal padding */
+  line-height: 1; /* Ensure consistent height */
 
-  /* Default state (placeholder shown) */
-  transform: translateY(0.5rem) scale(1); /* Adjust Y based on input padding */
-  
-  /* Active state (focused or has value) - these will be overridden by peer styles in JSX */
-  /* Example: input:focus + label OR input:not(:placeholder-shown) + label */
+  /* Style for when the input has value or is focused */
+  /* This requires adding a class (e.g., 'active') via JS or using :placeholder-shown */
 }
 
-/* Example of how peer styling would work if done purely in CSS,
-   but it's better to use Tailwind's peer variants in the component's className prop.
 .floating-label-input:focus ~ .floating-label-label,
 .floating-label-input:not(:placeholder-shown) ~ .floating-label-label {
-  transform: translateY(-0.875rem) scale(0.75); 
-  top: 0; 
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
-  background-color: hsl(var(--background)); 
-  color: hsl(var(--primary));
+    transform: translateY(-1.1rem) scale(0.75); /* Adjust translateY to clear the top border */
+    font-size: 0.75rem; /* text-xs */
+    color: hsl(var(--primary));
 }
-*/
 
-/* Styling for Geist fonts if used (ensure they are imported correctly) */
-:root {
-  --font-geist-sans: 'Geist Sans', sans-serif;
-  --font-geist-mono: 'Geist Mono', monospace;
+/* Ensure placeholder is not actually shown if we use :placeholder-shown logic */
+.floating-label-input::placeholder {
+    color: transparent;
 }

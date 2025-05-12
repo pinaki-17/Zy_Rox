@@ -16,6 +16,8 @@ interface Note {
   createdAt?: string; // from timestamps
 }
 
+const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5001"; // Get base URL
+
 export default function NotesPage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +31,7 @@ export default function NotesPage() {
   const fetchNotes = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get<Note[]>("/api/notes");
+      const response = await axios.get<Note[]>(`${apiUrl}/api/notes`);
       setNotes(response.data);
     } catch (error) {
       console.error("Error fetching notes:", error);
@@ -41,7 +43,8 @@ export default function NotesPage() {
 
   useEffect(() => {
     fetchNotes();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Added toast to dependency array if it's expected to change, otherwise disable lint warning
 
   const handleCreateNote = async (e: FormEvent) => {
     e.preventDefault();
@@ -51,7 +54,7 @@ export default function NotesPage() {
     }
     setIsLoading(true);
     try {
-      const response = await axios.post<Note>("/api/notes", {
+      const response = await axios.post<Note>(`${apiUrl}/api/notes`, {
         title: newNoteTitle,
         content: newNoteContent,
         // color: "bg-yellow-100 dark:bg-yellow-900/30" // Example color
@@ -82,7 +85,7 @@ export default function NotesPage() {
     }
     setIsLoading(true);
     try {
-      const response = await axios.put<Note>(`/api/notes/${editingNote._id}`, {
+      const response = await axios.put<Note>(`${apiUrl}/api/notes/${editingNote._id}`, {
         title: newNoteTitle,
         content: newNoteContent,
       });
@@ -104,7 +107,7 @@ export default function NotesPage() {
     if (!window.confirm("Are you sure you want to delete this note?")) return;
     setIsLoading(true);
     try {
-      await axios.delete(`/api/notes/${noteId}`);
+      await axios.delete(`${apiUrl}/api/notes/${noteId}`);
       setNotes(notes.filter((note) => note._id !== noteId));
       toast({ title: "Success", description: "Note deleted successfully." });
     } catch (error) {
@@ -184,7 +187,7 @@ export default function NotesPage() {
       </Card>
 
       {isLoading && notes.length === 0 && <p>Loading notes...</p>}
-      {!isLoading && notes.length === 0 && <p>No notes yet. Create one above!</p>}
+      {!isLoading && notes.length === 0 && !editingNote && <p>No notes yet. Create one above!</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredNotes.map((note) => (

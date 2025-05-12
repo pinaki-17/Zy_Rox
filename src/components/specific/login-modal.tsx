@@ -17,28 +17,22 @@ import { cn } from "@/lib/utils";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 
+// Simplified FloatingLabelInput
 const FloatingLabelInput = ({ id, label, type = "text", ...props }: { id: string, label: string, type?: string } & React.InputHTMLAttributes<HTMLInputElement>) => {
   return (
-    <div className="floating-label-container mb-6">
+    <div className="floating-label-container">
       <Input
         id={id}
         type={type}
-        placeholder=" " // Important: space placeholder for floating label
-        className="floating-label-input peer" 
+        placeholder=" " // Important: space placeholder triggers :not(:placeholder-shown)
+        className="floating-label-input" // Apply base class
         {...props}
       />
-      <Label 
-        htmlFor={id} 
-        className={cn(
-          "floating-label-label",
-          "peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0",
-          "peer-focus:scale-75 peer-focus:-translate-y-3.5 peer-focus:text-primary",
-          "peer-[&:not(:placeholder-shown)]:scale-75 peer-[&:not(:placeholder-shown)]:-translate-y-3.5 peer-[&:not(:placeholder-shown)]:text-primary",
-          "absolute left-3 top-2 origin-[0] -translate-y-3.5 scale-75 transform text-sm text-muted-foreground duration-200",
-          "peer-placeholder-shown:top-2 peer-placeholder-shown:text-base",
-          "peer-focus:-top-2.5 peer-focus:text-xs",
-          "peer-[:not(:placeholder-shown)]:-top-2.5 peer-[:not(:placeholder-shown)]:text-xs"
-        )}
+      <Label
+        htmlFor={id}
+        // Removed complex peer-based class logic
+        // Basic positioning and transitions are handled by CSS in globals.css
+        className="floating-label-label"
       >
         {label}
       </Label>
@@ -60,7 +54,9 @@ export function LoginModal({ children }: PropsWithChildren) {
     setIsLoading(true);
     const email = type === 'user' ? userEmail : adminEmail;
     const password = type === 'user' ? userPassword : adminPassword;
-    const url = type === 'user' ? "/api/auth/login" : "/api/auth/admin/login";
+    // Construct full URL for API calls
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5001"; // Get base URL from env or default
+    const url = type === 'user' ? `${apiUrl}/api/auth/login` : `${apiUrl}/api/auth/admin/login`;
 
     try {
       const response = await axios.post(url, { email, password });
@@ -93,7 +89,7 @@ export function LoginModal({ children }: PropsWithChildren) {
             </TabsList>
           </DialogHeader>
           
-          <TabsContent value="user" className="p-6">
+          <TabsContent value="user" className="p-6 pt-0"> {/* Adjusted padding */}
             <form onSubmit={(e) => handleLogin(e, 'user')}>
               <FloatingLabelInput id="user-email" label="Email Address" type="email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)} required />
               <FloatingLabelInput id="user-password" label="Password" type="password" value={userPassword} onChange={(e) => setUserPassword(e.target.value)} required />
@@ -104,7 +100,7 @@ export function LoginModal({ children }: PropsWithChildren) {
               </DialogFooter>
             </form>
           </TabsContent>
-          <TabsContent value="admin" className="p-6">
+          <TabsContent value="admin" className="p-6 pt-0"> {/* Adjusted padding */}
             <form onSubmit={(e) => handleLogin(e, 'admin')}>
               <FloatingLabelInput id="admin-email" label="Admin Email" type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} required/>
               <FloatingLabelInput id="admin-password" label="Admin Password" type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} required/>

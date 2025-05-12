@@ -1,4 +1,4 @@
-"use client" // This directive is Next.js specific, remove for Vite/React
+ // This directive is Next.js specific, remove for Vite/React
 
 import { useState, useEffect, useCallback } from "react"
 // import Image from "next/image" // Replace with <img>
@@ -104,4 +104,3 @@ export function ImageSlider() {
     </div>
   )
 }
-
