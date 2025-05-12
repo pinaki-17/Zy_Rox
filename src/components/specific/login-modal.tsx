@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from "react"
+import { cn } from "@/lib/utils"
 
 const FloatingLabelInput = ({ id, label, type = "text", ...props }: { id: string, label: string, type?: string } & React.InputHTMLAttributes<HTMLInputElement>) => {
   return (
@@ -24,10 +25,18 @@ const FloatingLabelInput = ({ id, label, type = "text", ...props }: { id: string
         id={id}
         type={type}
         placeholder=" " // Important: space placeholder for floating label
-        className="floating-label-input"
+        className="floating-label-input" // This class applies 'peer'
         {...props}
       />
-      <Label htmlFor={id} className="floating-label-label">
+      <Label 
+        htmlFor={id} 
+        className={cn(
+          "floating-label-label", // Base styles from globals.css
+          "peer-placeholder-shown:top-2 peer-placeholder-shown:text-base",
+          "peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-primary",
+          "peer-[:not(:placeholder-shown)]:-top-2.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:text-primary"
+        )}
+      >
         {label}
       </Label>
     </div>
