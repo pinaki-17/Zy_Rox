@@ -1,7 +1,6 @@
-
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+// import Image from "next/image"; // Replace with <img>
 import { Headphones, BookOpen, Youtube, Waves } from "lucide-react";
 
 const activities = [
@@ -39,6 +38,8 @@ const activities = [
   },
 ];
 
+// TODO: Buttons could link to external resources or internal mini-apps
+
 export default function ChillZonePage() {
   return (
     <div className="container mx-auto py-8 px-4">
@@ -56,11 +57,10 @@ export default function ChillZonePage() {
           <Card key={index} className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader className="p-0">
                <div className="aspect-[16/8] relative w-full">
-                <Image 
+                <img 
                   src={activity.imageUrl} 
                   alt={activity.title} 
-                  layout="fill" 
-                  objectFit="cover"
+                  className="w-full h-full object-cover"
                   data-ai-hint={activity.aiHint}
                 />
               </div>
@@ -73,7 +73,7 @@ export default function ChillZonePage() {
               <CardDescription className="text-foreground/80">{activity.description}</CardDescription>
             </CardContent>
             <CardFooter className="p-6 pt-0">
-              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">{activity.action}</Button>
+              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => alert(`Action: ${activity.action}`)}>{activity.action}</Button>
             </CardFooter>
           </Card>
         ))}

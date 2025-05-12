@@ -1,7 +1,6 @@
-
 import { ImageSlider } from "@/components/specific/image-slider"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { Link } from "react-router-dom"
 
 export default function HomePage() {
   return (
@@ -22,21 +21,21 @@ export default function HomePage() {
           <h3 className="text-xl font-semibold text-primary mb-2">Stay Organized</h3>
           <p className="text-muted-foreground mb-4">Manage your tasks and notes efficiently. Never miss a deadline or an idea.</p>
           <Button variant="outline" asChild>
-            <Link href="/tasks">View Tasks</Link>
+            <Link to="/tasks">View Tasks</Link>
           </Button>
         </div>
         <div className="p-6 bg-card rounded-lg shadow-md border">
           <h3 className="text-xl font-semibold text-primary mb-2">Connect & Share</h3>
           <p className="text-muted-foreground mb-4">Engage with our community, share your thoughts on the blog, or chat with friends.</p>
            <Button variant="outline" asChild>
-            <Link href="/blog">Read Blog</Link>
+            <Link to="/blog">Read Blog</Link>
           </Button>
         </div>
         <div className="p-6 bg-card rounded-lg shadow-md border">
           <h3 className="text-xl font-semibold text-primary mb-2">Relax & Unwind</h3>
           <p className="text-muted-foreground mb-4">Take a break in our Chill Zone. Find peace and recharge your mind.</p>
            <Button variant="outline" asChild>
-            <Link href="/chill-zone">Chill Zone</Link>
+            <Link to="/chill-zone">Chill Zone</Link>
           </Button>
         </div>
       </section>

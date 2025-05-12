@@ -1,7 +1,6 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
+// import Image from "next/image"; // Replace with <img>
 import { Users, Target, Lightbulb, Heart } from "lucide-react";
 
 const teamMembers = [
@@ -25,11 +24,10 @@ export default function AboutUsPage() {
 
       <section className="mb-16">
         <div className="relative aspect-[16/7] w-full rounded-xl overflow-hidden shadow-2xl">
-          <Image 
+          <img 
             src="https://picsum.photos/1200/525?random=35" 
             alt="ZenithHub Team Working" 
-            layout="fill" 
-            objectFit="cover"
+            className="w-full h-full object-cover"
             data-ai-hint="team office"
           />
            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>

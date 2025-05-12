@@ -1,24 +1,29 @@
-
-"use client"
-
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-import { cn } from "@/lib/utils"
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 interface TaskCardProps {
-  id: string
-  title: string
+  id: string;
+  title: string;
   icon?: React.ReactNode;
+  initialCompleted: boolean;
+  onToggleComplete: (taskId: string, currentCompletedStatus: boolean) => void;
 }
 
-export function TaskCard({ id, title, icon }: TaskCardProps) {
-  const [completed, setCompleted] = useState(false)
+export function TaskCard({ id, title, icon, initialCompleted, onToggleComplete }: TaskCardProps) {
+  const [completed, setCompleted] = useState(initialCompleted);
+
+  useEffect(() => {
+    setCompleted(initialCompleted);
+  }, [initialCompleted]);
 
   const handleToggle = () => {
-    setCompleted(!completed)
-  }
+    const newCompletedStatus = !completed;
+    setCompleted(newCompletedStatus); // Optimistic update
+    onToggleComplete(id, completed); // Pass original 'completed' status to backend
+  };
 
   return (
     <Card className={cn(
@@ -36,7 +41,7 @@ export function TaskCard({ id, title, icon }: TaskCardProps) {
       </CardHeader>
       <CardContent className="flex items-center justify-between">
         <Label htmlFor={`task-${id}`} className={cn(
-            "text-sm transition-colors",
+            "text-sm transition-colors cursor-pointer",
             completed ? "text-muted-foreground" : "text-foreground"
           )}>
           {completed ? "Completed" : "Mark as complete"}
@@ -50,5 +55,5 @@ export function TaskCard({ id, title, icon }: TaskCardProps) {
         />
       </CardContent>
     </Card>
-  )
+  );
 }

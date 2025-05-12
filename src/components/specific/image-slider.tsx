@@ -1,8 +1,7 @@
-
-"use client"
+"use client" // This directive is Next.js specific, remove for Vite/React
 
 import { useState, useEffect, useCallback } from "react"
-import Image from "next/image"
+// import Image from "next/image" // Replace with <img>
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -56,14 +55,12 @@ export function ImageSlider() {
       >
         {slidesData.map((slide, index) => (
           <div key={index} className="w-full flex-shrink-0 h-full relative">
-            <Image
+            <img
               src={slide.src}
               alt={slide.alt}
               data-ai-hint={slide.hint}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-lg"
-              priority={index === 0} // Prioritize loading the first image
+              className="w-full h-full object-cover rounded-lg"
+              loading={index === 0 ? "eager" : "lazy"} // Basic loading optimization
             />
             <div className="absolute inset-0 bg-black/20"></div>
           </div>
@@ -107,3 +104,4 @@ export function ImageSlider() {
     </div>
   )
 }
+
