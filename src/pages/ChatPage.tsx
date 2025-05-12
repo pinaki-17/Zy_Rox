@@ -84,7 +84,7 @@ export default function ChatPage() {
           <Avatar>
             <AvatarImage src="https://picsum.photos/50/50?random=5" alt="Chat User" data-ai-hint="person avatar"/>
             <AvatarFallback>CU</AvatarFallback>
-          </div>
+          </Avatar>
           <div>
             <h2 className="text-lg font-semibold text-card-foreground">ZenithHub Support</h2>
             <p className="text-xs text-muted-foreground">Online</p>
