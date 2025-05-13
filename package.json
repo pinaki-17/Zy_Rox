@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev:frontend": "vite --port 3000",
-    "dev:backend": "nodemon --exec ./node_modules/.bin/tsx backend/src/server.ts",
+    "dev:backend": "nodemon --exec tsx backend/src/server.ts --watch backend --ext ts,json --signal SIGINT",
     "dev": "concurrently \"npm:dev:frontend\" \"npm:dev:backend\"",
     "build:frontend": "tsc && vite build",
     "build:backend": "cd backend && tsc",
@@ -70,6 +70,7 @@
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
     "typescript": "^5.5.3",
     "vite": "^5.3.3"
   }

@@ -33,6 +33,9 @@ export function AppHeader({ onToggleSidebar, sidebarOpen }: AppHeaderProps) {
         </div>
         
         <div className="flex items-center gap-4">
+           <Link to="/about-us">
+            <Button variant="ghost">Contact Us</Button>
+          </Link>
           <LoginModal>
             <Button variant="outline">Login</Button>
           </LoginModal>

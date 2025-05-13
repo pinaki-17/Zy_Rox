@@ -7,6 +7,7 @@ import ChatPage from '@/pages/ChatPage'
 import BlogPage from '@/pages/BlogPage'
 import ChillZonePage from '@/pages/ChillZonePage'
 import AboutUsPage from '@/pages/AboutUsPage'
+import PaymentGatewayPage from '@/pages/PaymentGatewayPage'
 // Import other pages if you create them
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/chill-zone" element={<ChillZonePage />} />
         <Route path="/about-us" element={<AboutUsPage />} />
+        <Route path="/payment-gateway" element={<PaymentGatewayPage />} />
         {/* Add other routes here */}
       </Routes>
     </AppShell>
