@@ -7,13 +7,12 @@ import taskRoutes from './routes/taskRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 // import { ai } from './ai/genkit.js'; // Initialize Genkit if needed for backend flows
 
-dotenv.config();
-
+dotenv.config({ path: 'backend/.env' });
 connectDB();
 
 const app = express();
 
-app.use(cors()); // Configure CORS appropriately for production
+app.use(cors({ origin: 'https://3001-firebase-studio-1747022313147.cluster-w5vd22whf5gmav2vgkomwtc4go.cloudworkstations.dev' })); // Configure CORS appropriately for production
 app.use(express.json());
 
 // Initialize Genkit development UI if in dev - this may need adjustment based on how genkit is used

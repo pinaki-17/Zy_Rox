@@ -5,8 +5,16 @@ import Task, { type ITask } from '../models/Task.js';
 // @route   GET /api/tasks
 export const getTasks = async (req: Request, res: Response) => {
   try {
+    const { completed } = req.query;
+    let filter = {};
     // const tasks = await Task.find({ userId: req.user.id }); // Assuming auth
-    const tasks = await Task.find({}); // Public for now
+    if (completed === 'true') {
+      filter = { completed: true };
+    } else if (completed === 'false') {
+      filter = { completed: false };
+    }
+
+    const tasks = await Task.find(filter); // Public for now, with filtering
     res.json(tasks);
   } catch (error: any) {
     res.status(500).json({ message: 'Server Error', error: error.message });
@@ -66,4 +74,35 @@ export const deleteTask = async (req: Request, res: Response) => {
     } catch (error: any) {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
+};
+
+// @desc    Get single task by ID
+// @route   GET /api/tasks/:id
+export const getTaskById = async (req: Request, res: Response) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+    // Add authorization check here
+
+    res.json(task);
+  } catch (error: any) {
+    // Handle invalid object ID
+    if (error.kind === 'ObjectId') {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Clear all completed tasks
+// @route   DELETE /api/tasks/completed
+export const clearCompletedTasks = async (req: Request, res: Response) => {
+  try {
+    await Task.deleteMany({ completed: true });
+    res.json({ message: 'Completed tasks cleared' });
+  } catch (error: any) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
 };

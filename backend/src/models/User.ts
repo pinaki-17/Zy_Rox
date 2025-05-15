@@ -4,7 +4,11 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IUser extends Document {
   email: string;
   passwordHash: string;
+  uniqueId: string;
   role: 'user' | 'admin';
+  otp?: string;
+  otpExpiresAt?: Date;
+  isEmailVerified?: boolean;
   // comparePassword(password: string): Promise<boolean>;
 }
 
@@ -23,6 +27,22 @@ const UserSchema: Schema = new Schema({
     type: String,
     enum: ['user', 'admin'],
     default: 'user',
+  },
+  uniqueId: {
+    type: String,
+    required: true,
+  },
+  otp: {
+    type: String,
+    required: false, // Optional field
+  },
+  otpExpiresAt: {
+    type: Date,
+    required: false, // Optional field
+  },
+  isEmailVerified: {
+    type: Boolean,
+    default: false, // Default to false
   }
 }, { timestamps: true });
 

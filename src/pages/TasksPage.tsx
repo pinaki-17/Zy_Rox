@@ -32,6 +32,7 @@ export default function TasksPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
   const { toast } = useToast();
 
   const fetchTasks = async () => {

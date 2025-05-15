@@ -9,6 +9,7 @@ const activities = [
     description: "Listen to calming nature sounds or ambient music to relax your mind.",
     icon: <Headphones className="w-8 h-8 text-primary" />,
     action: "Listen Now",
+    url: "https://www.spotify.com/", // Spotify link
     imageUrl: "https://picsum.photos/400/200?random=20",
     aiHint: "headphones music"
   },
@@ -17,6 +18,7 @@ const activities = [
     description: "Follow guided meditation sessions for stress relief and mental clarity.",
     icon: <Waves className="w-8 h-8 text-primary" />,
     action: "Start Session",
+    url: "https://www.calm.com/", // Meditation website link
     imageUrl: "https://picsum.photos/400/200?random=21",
     aiHint: "yoga meditation"
   },
@@ -25,6 +27,7 @@ const activities = [
     description: "Access a curated list of calming articles and short stories.",
     icon: <BookOpen className="w-8 h-8 text-primary" />,
     action: "Read Now",
+    url: "https://www.gutenberg.org/", // Book reading website link
     imageUrl: "https://picsum.photos/400/200?random=22",
     aiHint: "book library"
   },
@@ -33,6 +36,7 @@ const activities = [
     description: "Watch soothing videos, from nature scenes to art creation.",
     icon: <Youtube className="w-8 h-8 text-primary" />,
     action: "Watch Now",
+ url: "https://www.youtube.com/live/eKbfUtLoQwE?si=BA-VqQ-5_zVgvTTS", // Replace with a real calming video URL
     imageUrl: "https://picsum.photos/400/200?random=23",
     aiHint: "nature video"
   },
@@ -73,7 +77,7 @@ export default function ChillZonePage() {
               <CardDescription className="text-foreground/80">{activity.description}</CardDescription>
             </CardContent>
             <CardFooter className="p-6 pt-0">
-              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => alert(`Action: ${activity.action}`)}>{activity.action}</Button>
+              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => window.open(activity.url, '_blank')}>{activity.action}</Button>
             </CardFooter>
           </Card>
         ))}

@@ -1,7 +1,6 @@
 import { ImageSlider } from "@/components/specific/image-slider"
-import { Button } from "@/components/ui/button"
-import { Link } from "react-router-dom"
-import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from "react-router-dom"
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -103,28 +102,32 @@ export default function HomePage() {
             <p className="text-muted-foreground">Great for getting started.</p>
             <p className="text-4xl font-bold text-foreground">$0<span className="text-lg font-normal text-muted-foreground">/month</span></p>
             <ul className="text-muted-foreground text-sm space-y-2 text-left">
-              <li>✓ Basic Task Management</li>
-              <li>✓ Limited Notes</li>
-              <li>✓ Community Access</li>
+              <li>✓ Basic Task Management</li><li>✓ Limited Notes</li><li>✓ Community Access</li>
             </ul>
+            {/* Added onClick handler to navigate */}
+
             <Button variant="secondary" className="w-full" onClick={() => navigate('/payment-gateway')}>Get Started</Button>
           </div>
-          <div className="p-6 border rounded-lg bg-primary text-primary-foreground shadow-lg space-y-4 transform scale-105" onClick={() => navigate('/payment-gateway-pro')}>
+          <div className="p-6 border rounded-lg bg-primary text-primary-foreground shadow-lg space-y-4 transform scale-105" >
             <h3 className="text-2xl font-bold">Pro Plan</h3>
             <p className="text-primary-foreground/90">Unlock full potential.</p>
             <p className="text-4xl font-bold">$9<span className="text-lg font-normal">/month</span></p>
             <ul className="text-primary-foreground/90 text-sm space-y-2 text-left">
               <li>✓ Unlimited Tasks & Notes</li><li>✓ Advanced Organization</li><li>✓ Priority Support</li>
               <li>✓ Exclusive Chill Zone Features</li>
-            </ul><Button variant="secondary" className="w-full" onClick={() => navigate('/payment-gateway')}>Get Started</Button>
-          </div>
+            </ul>
+            {/* Added onClick handler to navigate */}
+            <Button variant="secondary" className="w-full" onClick={() => navigate('/payment-gateway')}>Get Started</Button>
+          </div> 
           <div className="p-6 border rounded-lg bg-background shadow-sm space-y-4" onClick={() => navigate('/payment-gateway-business')}>
             <p className="text-4xl font-bold text-foreground">$29<span className="text-lg font-normal text-muted-foreground">/month</span></p>
             <ul className="text-muted-foreground text-sm space-y-2 text-left">
               <li>✓ All Pro Features</li>
               <li>✓ Team Collaboration</li>
               <li>✓ Admin Dashboard</li>
-            </ul>            <Button variant="secondary" className="w-full" onClick={() => navigate('/payment-gateway-business')}>Contact Us</Button>
+            </ul>
+            {/* Added onClick handler to navigate */}
+            <Button variant="secondary" className="w-full" onClick={() => navigate('/payment-gateway-business')}>Contact Us</Button>
           </div>
         </div>
       </section>
